@@ -94,21 +94,13 @@ export default function FarmerDashboard() {
       </div>
     );
   }
-  
-  const onFormSubmit = (values: z.infer<typeof formSchema>) => {
-    const formData = new FormData();
-    formData.append('cropName', values.cropName);
-    formData.append('harvestDate', values.harvestDate.toISOString());
-    formData.append('qualityMetrics', values.qualityMetrics);
-    formAction(formData);
-  };
 
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6 text-center">Log New Harvest</h2>
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onFormSubmit)}
+          action={formAction}
           className="space-y-8"
         >
           {state.errors && state.errors.length > 0 && (
@@ -144,6 +136,7 @@ export default function FarmerDashboard() {
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel className="text-lg">Harvest Date</FormLabel>
+                <input type="hidden" name="harvestDate" value={field.value?.toISOString() ?? ''} />
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
