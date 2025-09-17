@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Card, CardContent, CardFooter } from '../ui/card';
-import { QrCode } from 'lucide-react';
+import { QrCode, ExternalLink } from 'lucide-react';
 
 interface QrCodeDisplayProps {
   produceId: string;
@@ -11,9 +11,9 @@ export default function QrCodeDisplay({ produceId }: QrCodeDisplayProps) {
 
   return (
     <Link href={traceUrl} target="_blank" rel="noopener noreferrer">
-      <Card className="hover:shadow-lg transition-shadow bg-card">
-        <CardContent className="p-6">
-          <div className="aspect-square w-48 h-48 mx-auto bg-white p-2 rounded-lg">
+      <Card className="hover:shadow-lg transition-shadow bg-card border-none w-56">
+        <CardContent className="p-4">
+          <div className="aspect-square w-full mx-auto bg-white p-2 rounded-lg">
             {/* This is a placeholder SVG for a QR code */}
             <svg
               viewBox="0 0 256 256"
@@ -28,9 +28,9 @@ export default function QrCodeDisplay({ produceId }: QrCodeDisplayProps) {
             </svg>
           </div>
         </CardContent>
-        <CardFooter className="bg-muted/50 px-6 py-3">
-          <div className="flex items-center text-sm text-muted-foreground">
-            <QrCode className="w-4 h-4 mr-2" />
+        <CardFooter className="bg-transparent px-4 py-3">
+          <div className="flex items-center text-sm text-muted-foreground group-hover:text-primary transition-colors">
+            <ExternalLink className="w-4 h-4 mr-2" />
             <span>Click to view trace page</span>
           </div>
         </CardFooter>

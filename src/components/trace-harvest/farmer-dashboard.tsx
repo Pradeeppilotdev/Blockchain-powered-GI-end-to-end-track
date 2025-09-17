@@ -1,11 +1,10 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { submitHarvestData, type FormState } from '@/app/actions';
-import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -19,7 +18,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Loader2, PartyPopper } from 'lucide-react';
+import { CalendarIcon, Loader2, PartyPopper, Bot } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -71,42 +70,54 @@ export default function FarmerDashboard() {
     }
   }, [state, toast, form]);
 
+  const handleReset = () => {
+    form.reset();
+    // A bit of a hack to reset the action state.
+    // In a real app, you might use a key on the component or a different state management pattern.
+    window.location.reload();
+  };
+
   if (state.success && state.produceId) {
     return (
       <div className="text-center flex flex-col items-center gap-6">
-        <PartyPopper className="w-16 h-16 text-green-500" />
+        <div className="p-4 bg-primary/10 rounded-full">
+          <PartyPopper className="w-16 h-16 text-primary" />
+        </div>
         <h2 className="text-2xl font-bold">Harvest Logged Successfully!</h2>
-        <p className="text-muted-foreground">
-          The following QR code is now active on the blockchain.
-          <br />
-          Attach it to your produce batch for tracking.
+        <p className="text-muted-foreground max-w-md">
+          The following QR code is now active on the blockchain. Attach it to your produce batch for end-to-end tracking.
         </p>
-        <Card className="p-4">
+        <Card className="p-4 bg-background">
           <QrCodeDisplay produceId={state.produceId} />
         </Card>
-        <Button onClick={() => (state.success = false)}>Log Another Batch</Button>
+        <Button onClick={handleReset}>Log Another Batch</Button>
       </div>
     );
   }
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4 text-center">Log New Harvest</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Log New Harvest</h2>
       <Form {...form}>
         <form
           action={formAction}
-          onSubmit={form.handleSubmit(() =>
-            formAction(new FormData(form.control._formValues.current))
-          )}
-          className="space-y-6"
+          onSubmit={form.handleSubmit(() => {
+            const formData = new FormData();
+            const values = form.getValues();
+            formData.append('cropName', values.cropName);
+            formData.append('harvestDate', values.harvestDate.toISOString());
+            formData.append('qualityMetrics', values.qualityMetrics);
+            formAction(formData);
+          })}
+          className="space-y-8"
         >
           {state.errors && state.errors.length > 0 && (
             <Alert variant="destructive">
               <AlertTitle>Validation Error</AlertTitle>
               <AlertDescription>
-                <ul>
+                <ul className="list-disc pl-5">
                   {state.errors.map((error, i) => (
-                    <li key={i}>- {error}</li>
+                    <li key={i}>{error}</li>
                   ))}
                 </ul>
               </AlertDescription>
@@ -118,9 +129,9 @@ export default function FarmerDashboard() {
             name="cropName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Crop Name</FormLabel>
+                <FormLabel className="text-lg">Crop Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Organic Honeycrisp Apples" {...field} />
+                  <Input placeholder="e.g., Organic Honeycrisp Apples" {...field} className="h-12 text-lg"/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -132,14 +143,14 @@ export default function FarmerDashboard() {
             name="harvestDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Harvest Date</FormLabel>
+                <FormLabel className="text-lg">Harvest Date</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
                       <Button
                         variant={'outline'}
                         className={cn(
-                          'w-full pl-3 text-left font-normal',
+                          'w-full pl-3 text-left font-normal h-12 text-lg',
                           !field.value && 'text-muted-foreground'
                         )}
                       >
@@ -168,21 +179,23 @@ export default function FarmerDashboard() {
             name="qualityMetrics"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quality Metrics</FormLabel>
+                <FormLabel className="text-lg">Quality Metrics</FormLabel>
                 <FormControl>
                   <Textarea
                     placeholder="Describe the quality, e.g., Weight: 15kg, Size: Medium, Color: Deep Red"
                     {...field}
+                    className="text-lg min-h-32"
                   />
                 </FormControl>
-                <FormDescription>
+                <FormDescription className="flex items-center gap-2 pt-2">
+                  <Bot className="w-4 h-4" />
                   This data will be validated for correct formatting by our AI.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+          <Button type="submit" size="lg" className="w-full text-lg h-14" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Validate and Submit to Blockchain
           </Button>

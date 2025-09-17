@@ -51,44 +51,44 @@ export default function DistributorRetailerDashboard({ role }: DistributorRetail
   return (
     <div className="text-center">
       <h2 className="text-2xl font-bold mb-4">
-        {role} Dashboard
+        {role} Hub
       </h2>
-      <p className="text-muted-foreground mb-6">
-        Scan a product's QR code to update its status in the supply chain.
+      <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+        Scan a product's QR code to update its status in the supply chain. This creates a new, immutable record.
       </p>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
-          <Button size="lg" onClick={handleScan} disabled={isScanning}>
+          <Button size="lg" onClick={handleScan} disabled={isScanning} className="h-14 text-lg">
             {isScanning ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
             ) : (
-              <ScanLine className="mr-2 h-4 w-4" />
+              <ScanLine className="mr-2 h-5 w-5" />
             )}
-            {isScanning ? 'Scanning...' : 'Scan Product QR Code'}
+            {isScanning ? 'Scanning...' : `Scan Product as ${role}`}
           </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Log New Supply Chain Event</DialogTitle>
+            <DialogTitle className="text-2xl">Log New Supply Chain Event</DialogTitle>
             <DialogDescription>
-              This action will be permanently recorded on the blockchain.
+              This action will be permanently recorded on the blockchain. Ensure all details are correct before submitting.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="location">Current Location</Label>
-              <Input id="location" placeholder="e.g., Central Warehouse, Anytown" />
+              <Label htmlFor="location" className="text-base">Current Location</Label>
+              <Input id="location" placeholder="e.g., Central Warehouse, Anytown" className="h-11 text-base"/>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="status">
+              <Label htmlFor="status" className="text-base">
                 Status Update
               </Label>
-              <Input id="status" placeholder={role === 'Distributor' ? 'e.g., In Transit' : 'e.g., On Display'} />
+              <Input id="status" placeholder={role === 'Distributor' ? 'e.g., In Transit' : 'e.g., On Display'} className="h-11 text-base"/>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="timestamp">Timestamp</Label>
-              <Input id="timestamp" value={new Date().toLocaleString()} readOnly disabled />
+              <Label htmlFor="timestamp" className="text-base">Timestamp</Label>
+              <Input id="timestamp" value={new Date().toLocaleString()} readOnly disabled className="h-11 text-base"/>
             </div>
           </div>
           <DialogFooter>
