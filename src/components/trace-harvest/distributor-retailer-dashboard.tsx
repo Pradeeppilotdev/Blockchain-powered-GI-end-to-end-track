@@ -30,6 +30,7 @@ export default function DistributorRetailerDashboard({ role }: DistributorRetail
     setIsScanning(true);
     // Simulate scanning time
     setTimeout(() => {
+      // In a real app, the QR scanner would provide the produce ID.
       setIsScanning(false);
       setIsDialogOpen(true);
     }, 1500);
@@ -37,7 +38,21 @@ export default function DistributorRetailerDashboard({ role }: DistributorRetail
 
   const handleSubmit = () => {
     setIsSubmitting(true);
-    // Simulate blockchain transaction
+
+    // BLOCKCHAIN INTEGRATION POINT (2)
+    // After scanning, the stakeholder (Distributor/Retailer) adds a new
+    // transaction to the produce's history on the blockchain.
+    //
+    // Example:
+    // const { transactionHash } = await mySmartContract.methods.addHistoryEvent(
+    //   produceIdFromQr, // The ID scanned from the QR code
+    //   role, // 'Distributor' or 'Retailer'
+    //   newLocation,
+    //   newStatus,
+    //   new Date().getTime()
+    // ).send({ from: stakeholderAddress });
+    //
+    // This action is immutable and transparent to all parties.
     setTimeout(() => {
       setIsSubmitting(false);
       setIsDialogOpen(false);

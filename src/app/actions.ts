@@ -54,10 +54,18 @@ export async function submitHarvestData(prevState: FormState, formData: FormData
       };
     }
 
-    // In a real app, you would now:
-    // 1. Create a transaction on the blockchain with the validated data.
-    // 2. The transaction hash or a new produce ID would be returned.
-    // 3. This ID would be used to generate the QR code.
+    // BLOCKCHAIN INTEGRATION POINT (1)
+    // In a real application, this is where you would call a smart contract
+    // to create a new digital asset (a "token") for the produce batch.
+    //
+    // Example:
+    // const { transactionHash, produceId } = await mySmartContract.methods.createProduce(
+    //   cropName,
+    //   new Date(harvestDate).getTime(),
+    //   qualityMetrics
+    // ).send({ from: farmerAddress });
+    //
+    // The `produceId` would be a unique identifier returned by the smart contract.
     const mockProduceId = `prod-${Date.now()}`;
 
     return {

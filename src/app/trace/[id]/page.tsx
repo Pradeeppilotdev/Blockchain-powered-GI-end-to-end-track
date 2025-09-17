@@ -8,7 +8,13 @@ import TraceTimeline from '@/components/trace-harvest/trace-timeline';
 import { Badge } from '@/components/ui/badge';
 
 export default function TracePage({ params }: { params: { id: string } }) {
-  // In a real app, params.id would be used to fetch data from the blockchain.
+  // BLOCKCHAIN INTEGRATION POINT (3)
+  // In a real app, params.id would be used to query the blockchain for the produce data.
+  // The smart contract would have a function to get the full history of an asset.
+  //
+  // Example:
+  // const produceData = await mySmartContract.methods.getProduceHistory(params.id).call();
+  // const { produce, traceEvents } = transformBlockchainData(produceData);
   const produce = mockProduce;
   const traceEvents = mockTraceData;
 
@@ -25,7 +31,7 @@ export default function TracePage({ params }: { params: { id: string } }) {
             </Button>
           </Link>
           <h1 className="text-xl font-bold">Product Traceability</h1>
-          <div className="w-10"></div>
+          <div className="w-10" />
         </div>
       </header>
       <main className="container py-8 md:py-16">
