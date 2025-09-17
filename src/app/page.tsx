@@ -14,10 +14,10 @@ export default function Home() {
   const [role, setRole] = useState<Role>('farmer');
 
   const roleDescriptions: Record<Role, string> = {
-    farmer: 'Log your harvest and generate QR codes for tracking.',
-    distributor: 'Scan produce to log transportation and processing steps.',
-    retailer: 'Scan incoming produce to log it into your retail inventory.',
-    consumer: 'Scan a product QR code to view its full journey from the farms of Odisha.',
+    farmer: 'Log your GI-tagged harvest and generate a unique blockchain-based QR code.',
+    distributor: 'Scan produce to log transportation and add to its secure, transparent journey.',
+    retailer: 'Scan incoming GI produce to verify its origin and log it into your inventory.',
+    consumer: 'Scan a product QR code to view its entire journey and verify its Geographical Indication status.',
   };
 
   return (
@@ -33,10 +33,10 @@ export default function Home() {
       <main className="container py-8 md:py-16">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Odisha Agricultural Supply Chain
+            Verifying Odisha&apos;s Geographical Treasures
           </h1>
           <p className="text-lg text-muted-foreground mt-3 max-w-2xl mx-auto">
-            A transparent and fair digital ledger for tracking produce from the farm to your table, ensuring authenticity and fair pricing for a variety of crops.
+            A blockchain-powered platform ensuring the authenticity of Geographical Indication (GI) products. Trace the journey from farm to table.
           </p>
         </div>
 

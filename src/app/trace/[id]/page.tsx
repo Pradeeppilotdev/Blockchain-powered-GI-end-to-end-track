@@ -1,7 +1,7 @@
 import { mockProduce, mockTraceData } from '@/lib/data';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import TraceTimeline from '@/components/trace-harvest/trace-timeline';
@@ -11,6 +11,8 @@ export default function TracePage({ params }: { params: { id: string } }) {
   // In a real app, params.id would be used to fetch data from the blockchain.
   const produce = mockProduce;
   const traceEvents = mockTraceData;
+
+  const isGITagged = produce.qualityMetrics.some(metric => metric.includes('GI-Tagged'));
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,6 +46,13 @@ export default function TracePage({ params }: { params: { id: string } }) {
               </Badge>
               <h2 className="text-4xl font-bold">{produce.name}</h2>
               <p className="text-muted-foreground mt-2 text-lg">Harvested on {produce.harvestDate}</p>
+              
+              {isGITagged && (
+                <div className="mt-6 flex items-center gap-2 text-primary">
+                  <CheckCircle className="h-6 w-6" />
+                  <span className="font-semibold text-lg">Verified Geographical Indication</span>
+                </div>
+              )}
 
               <div className="mt-8">
                 <h3 className="font-semibold text-xl mb-3">Quality Metrics</h3>
@@ -59,8 +68,8 @@ export default function TracePage({ params }: { params: { id: string } }) {
             <CardHeader className="px-0 pt-0 mb-4">
               <CardTitle className="text-2xl">Supply Chain Journey</CardTitle>
               <CardDescription className="text-base">
-                This entire history is securely logged on the blockchain for complete transparency.
-              </CardDescription>
+                This entire history is securely logged on the blockchain, guaranteeing its origin and authenticity.
+              </-CardDescription>
             </CardHeader>
             <TraceTimeline events={traceEvents} />
           </CardContent>

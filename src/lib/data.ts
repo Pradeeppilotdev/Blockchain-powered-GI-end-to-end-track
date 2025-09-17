@@ -6,6 +6,7 @@ export const mockProduce: Produce = {
   harvestDate: '2024-07-21',
   imageUrl: 'https://picsum.photos/seed/turmeric/800/800',
   qualityMetrics: [
+    'GI-Tagged Product',
     'Curcumin Content: 5.2%',
     'Weight: 20kg batch',
     'Grade: A (Organic)',
