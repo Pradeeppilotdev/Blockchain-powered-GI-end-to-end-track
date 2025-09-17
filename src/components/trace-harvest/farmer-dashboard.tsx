@@ -17,6 +17,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Loader2, PartyPopper, Bot } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
@@ -28,7 +35,7 @@ import QrCodeDisplay from './qr-code-display';
 import { Card } from '../ui/card';
 
 const formSchema = z.object({
-  cropName: z.string().min(2, 'Crop name must be at least 2 characters.'),
+  cropName: z.string().min(2, 'Please select a crop.'),
   harvestDate: z.date({
     required_error: 'A harvest date is required.',
   }),
@@ -40,6 +47,20 @@ const initialState: FormState = {
   message: '',
 };
 
+const cropOptions = [
+  'Kandhamal Haladi',
+  'Rice',
+  'Pulses',
+  'Oil Seeds',
+  'Jute',
+  'Coconut',
+  'Tea',
+  'Cotton',
+  'Groundnut',
+  'Rubber',
+  'Turmeric (Other)',
+];
+
 export default function FarmerDashboard() {
   const [state, formAction] = useActionState(submitHarvestData, initialState);
   const { toast } = useToast();
@@ -47,7 +68,7 @@ export default function FarmerDashboard() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      cropName: 'Kandhamal Haladi',
+      cropName: '',
       qualityMetrics: '',
     },
   });
@@ -124,9 +145,20 @@ export default function FarmerDashboard() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-lg">Crop Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Kandhamal Haladi" {...field} className="h-14 text-lg"/>
-                </FormControl>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="h-14 text-lg">
+                      <SelectValue placeholder="Select a crop to log" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {cropOptions.map((crop) => (
+                      <SelectItem key={crop} value={crop} className="text-lg">
+                        {crop}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

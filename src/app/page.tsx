@@ -14,7 +14,7 @@ export default function Home() {
   const [role, setRole] = useState<Role>('farmer');
 
   const roleDescriptions: Record<Role, string> = {
-    farmer: 'Log your Kandhamal Haladi harvest and generate QR codes for tracking.',
+    farmer: 'Log your harvest and generate QR codes for tracking.',
     distributor: 'Scan produce to log transportation and processing steps.',
     retailer: 'Scan incoming produce to log it into your retail inventory.',
     consumer: 'Scan a product QR code to view its full journey from the farms of Odisha.',
@@ -36,7 +36,7 @@ export default function Home() {
             Odisha Agricultural Supply Chain
           </h1>
           <p className="text-lg text-muted-foreground mt-3 max-w-2xl mx-auto">
-            A transparent and fair digital ledger for tracking produce from the farm to your table, ensuring authenticity and fair pricing for crops like Kandhamal Haladi.
+            A transparent and fair digital ledger for tracking produce from the farm to your table, ensuring authenticity and fair pricing for a variety of crops.
           </p>
         </div>
 
