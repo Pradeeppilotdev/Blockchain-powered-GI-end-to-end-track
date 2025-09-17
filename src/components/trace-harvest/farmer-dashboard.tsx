@@ -94,13 +94,21 @@ export default function FarmerDashboard() {
       </div>
     );
   }
+  
+  const onFormSubmit = (values: z.infer<typeof formSchema>) => {
+    const formData = new FormData();
+    formData.append('cropName', values.cropName);
+    formData.append('harvestDate', values.harvestDate.toISOString());
+    formData.append('qualityMetrics', values.qualityMetrics);
+    formAction(formData);
+  };
 
   return (
     <div>
       <h2 className="text-2xl font-bold mb-6 text-center">Log New Harvest</h2>
       <Form {...form}>
         <form
-          action={formAction}
+          onSubmit={form.handleSubmit(onFormSubmit)}
           className="space-y-8"
         >
           {state.errors && state.errors.length > 0 && (
