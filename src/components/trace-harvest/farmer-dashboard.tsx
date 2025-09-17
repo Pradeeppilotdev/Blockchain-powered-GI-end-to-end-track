@@ -39,7 +39,12 @@ const formSchema = z.object({
   harvestDate: z.date({
     required_error: 'A harvest date is required.',
   }),
-  qualityMetrics: z.string().min(5, 'Please provide quality metrics (e.g., Curcumin content, Weight, Grade).'),
+  qualityMetrics: z
+    .string()
+    .min(
+      5,
+      'Please provide quality metrics (e.g., Curcumin content, Weight, Grade).'
+    ),
 });
 
 const initialState: FormState = {
@@ -73,7 +78,10 @@ export default function FarmerDashboard() {
     },
   });
 
-  const { isSubmitting } = form.formState;
+  const {
+    formState: { isSubmitting },
+    handleSubmit,
+  } = form;
 
   useEffect(() => {
     if (state.message) {
@@ -93,6 +101,14 @@ export default function FarmerDashboard() {
     }
   }, [state, toast, form]);
 
+  const onFormSubmit = (values: z.infer<typeof formSchema>) => {
+    const formData = new FormData();
+    formData.append('cropName', values.cropName);
+    formData.append('harvestDate', values.harvestDate.toISOString());
+    formData.append('qualityMetrics', values.qualityMetrics);
+    formAction(formData);
+  };
+
   const handleReset = () => {
     form.reset();
     // A bit of a hack to reset the action state.
@@ -106,21 +122,24 @@ export default function FarmerDashboard() {
         <div className="p-4 bg-primary/10 rounded-full">
           <PartyPopper className="w-16 h-16 text-primary" />
         </div>
-        <h2 className="text-2xl font-bold">Harvest Logged Successfully!</h2>
+        <h2 className="text-2xl font-bold">Product Authenticated!</h2>
         <p className="text-muted-foreground max-w-md">
-          The following QR code is now active on the blockchain. Attach it to your produce batch for end-to-end tracking.
+          Your product is now registered on the blockchain. Attach this unique
+          QR code to the batch for complete traceability.
         </p>
         <Card className="p-4 bg-background">
           <QrCodeDisplay produceId={state.produceId} />
         </Card>
-        <Button onClick={handleReset}>Log Another Batch</Button>
+        <Button onClick={handleReset}>Register Another Batch</Button>
       </div>
     );
   }
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6 text-center">Log New Harvest</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">
+        Producer: Register New Product
+      </h2>
       <Form {...form}>
         <form
           action={formAction}
@@ -144,11 +163,14 @@ export default function FarmerDashboard() {
             name="cropName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-lg">Crop Name</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormLabel className="text-lg">GI Product Name</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger className="h-14 text-lg">
-                      <SelectValue placeholder="Select a crop to log" />
+                      <SelectValue placeholder="Select a GI product to register" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -169,8 +191,12 @@ export default function FarmerDashboard() {
             name="harvestDate"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel className="text-lg">Harvest Date</FormLabel>
-                <input type="hidden" name="harvestDate" value={field.value?.toISOString() ?? ''} />
+                <FormLabel className="text-lg">Harvest/Production Date</FormLabel>
+                <input
+                  type="hidden"
+                  name="harvestDate"
+                  value={field.value?.toISOString() ?? ''}
+                />
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -181,7 +207,11 @@ export default function FarmerDashboard() {
                           !field.value && 'text-muted-foreground'
                         )}
                       >
-                        {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
+                        {field.value ? (
+                          format(field.value, 'PPP')
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
                     </FormControl>
@@ -191,7 +221,9 @@ export default function FarmerDashboard() {
                       mode="single"
                       selected={field.value}
                       onSelect={field.onChange}
-                      disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date('1900-01-01')
+                      }
                       initialFocus
                     />
                   </PopoverContent>
@@ -206,25 +238,33 @@ export default function FarmerDashboard() {
             name="qualityMetrics"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-lg">Quality Metrics</FormLabel>
+                <FormLabel className="text-lg">
+                  Quality & Certification Details
+                </FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="e.g., Curcumin: 5.2%, Weight: 20kg, Grade: A"
+                    placeholder="e.g., GI-Tagged, Curcumin: 5.2%, Grade: A, Organic Certified"
                     {...field}
                     className="text-lg min-h-32"
                   />
                 </FormControl>
                 <FormDescription className="flex items-center gap-2 pt-2">
                   <Bot className="w-4 h-4" />
-                  This data will be validated for correct formatting by our AI.
+                  This data will be validated and permanently stored on the
+                  blockchain.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit" size="lg" className="w-full text-lg h-14" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full text-lg h-14"
+            disabled={isSubmitting}
+          >
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Validate and Submit to Blockchain
+            Authenticate and Submit
           </Button>
         </form>
       </Form>

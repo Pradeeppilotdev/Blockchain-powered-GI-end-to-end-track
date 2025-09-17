@@ -24,9 +24,9 @@ export default function ConsumerDashboard() {
       <div className="p-4 bg-primary/10 rounded-full mb-6">
         <QrCode className="w-12 h-12 text-primary" />
       </div>
-      <h2 className="text-2xl font-bold mb-4">Consumer Hub</h2>
+      <h2 className="text-2xl font-bold mb-4">Verify Product Authenticity</h2>
       <p className="text-muted-foreground mb-8 max-w-md">
-        Curious about where your food comes from? Scan the QR code on the packaging to trace its entire journey.
+        Make informed purchasing decisions. Scan the QR code on a GI product to view its complete, verified history on the blockchain.
       </p>
       <Button size="lg" onClick={handleScan} disabled={isScanning} className="h-14 text-lg">
         {isScanning ? (
@@ -34,7 +34,7 @@ export default function ConsumerDashboard() {
         ) : (
           <ScanLine className="mr-2 h-5 w-5" />
         )}
-        {isScanning ? 'Scanning...' : 'Scan Product QR Code'}
+        {isScanning ? 'Verifying...' : 'Scan Product QR Code'}
       </Button>
     </div>
   );
