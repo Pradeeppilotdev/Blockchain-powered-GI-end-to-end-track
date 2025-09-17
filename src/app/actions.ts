@@ -55,17 +55,21 @@ export async function submitHarvestData(prevState: FormState, formData: FormData
     }
 
     // BLOCKCHAIN INTEGRATION POINT (1)
-    // In a real application, this is where you would call a smart contract
-    // to create a new digital asset (a "token") for the produce batch.
+    // This is where you would call your smart contract to create a new digital asset.
+    // The `ethers` library and the connected signer would be used here.
     //
-    // Example:
-    // const { transactionHash, produceId } = await mySmartContract.methods.createProduce(
+    // Example (to be implemented on the client-side after wallet connection):
+    // const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+    // const transaction = await contract.createProduce(
     //   cropName,
     //   new Date(harvestDate).getTime(),
     //   qualityMetrics
-    // ).send({ from: farmerAddress });
-    //
-    // The `produceId` would be a unique identifier returned by the smart contract.
+    // );
+    // await transaction.wait();
+    // const produceId = await contract.getProduceIdFromTransaction(transaction.hash);
+    
+    // For now, we will continue to use a mock ID.
+    // In a real implementation, you would get this ID from the contract event/transaction.
     const mockProduceId = `prod-${Date.now()}`;
 
     return {

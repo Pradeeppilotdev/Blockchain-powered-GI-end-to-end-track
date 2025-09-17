@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Loader2, PartyPopper, Bot } from 'lucide-react';
+import { CalendarIcon, Loader2, PartyPopper, Bot, Wallet } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -33,6 +33,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import QrCodeDisplay from './qr-code-display';
 import { Card } from '../ui/card';
+import { useEthers } from '@/hooks/use-ethers';
 
 const formSchema = z.object({
   cropName: z.string().min(2, 'Please select a crop.'),
@@ -69,6 +70,8 @@ const cropOptions = [
 export default function FarmerDashboard() {
   const [state, formAction] = useActionState(submitHarvestData, initialState);
   const { toast } = useToast();
+  const { connect, address, provider } = useEthers();
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -80,7 +83,6 @@ export default function FarmerDashboard() {
 
   const {
     formState: { isSubmitting },
-    handleSubmit,
   } = form;
 
   useEffect(() => {
@@ -101,18 +103,8 @@ export default function FarmerDashboard() {
     }
   }, [state, toast, form]);
 
-  const onFormSubmit = (values: z.infer<typeof formSchema>) => {
-    const formData = new FormData();
-    formData.append('cropName', values.cropName);
-    formData.append('harvestDate', values.harvestDate.toISOString());
-    formData.append('qualityMetrics', values.qualityMetrics);
-    formAction(formData);
-  };
-
   const handleReset = () => {
     form.reset();
-    // A bit of a hack to reset the action state.
-    // In a real app, you might use a key on the component or a different state management pattern.
     window.location.reload();
   };
 
@@ -140,6 +132,17 @@ export default function FarmerDashboard() {
       <h2 className="text-2xl font-bold mb-6 text-center">
         Producer: Register New Product
       </h2>
+      {!address ? (
+        <div className="flex flex-col items-center gap-4 text-center">
+            <p className="text-muted-foreground">
+              Please connect your wallet to register a new product on the blockchain.
+            </p>
+            <Button size="lg" className="h-14 text-lg" onClick={connect}>
+                <Wallet className="mr-2 h-5 w-5" />
+                Connect Wallet
+            </Button>
+        </div>
+      ) : (
       <Form {...form}>
         <form
           action={formAction}
@@ -261,13 +264,14 @@ export default function FarmerDashboard() {
             type="submit"
             size="lg"
             className="w-full text-lg h-14"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !address}
           >
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Authenticate and Submit
           </Button>
         </form>
       </Form>
+      )}
     </div>
   );
 }
