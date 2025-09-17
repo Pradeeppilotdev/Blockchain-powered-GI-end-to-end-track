@@ -1,6 +1,6 @@
 'use client';
 
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -42,7 +42,7 @@ const initialState: FormState = {
 };
 
 export default function FarmerDashboard() {
-  const [state, formAction] = useFormState(submitHarvestData, initialState);
+  const [state, formAction] = useActionState(submitHarvestData, initialState);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
