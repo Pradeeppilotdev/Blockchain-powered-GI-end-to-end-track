@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Leaf, Bot } from 'lucide-react';
+import { Leaf } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import FarmerDashboard from '@/components/trace-harvest/farmer-dashboard';
 import DistributorRetailerDashboard from '@/components/trace-harvest/distributor-retailer-dashboard';
@@ -14,15 +14,15 @@ export default function Home() {
   const [role, setRole] = useState<Role>('farmer');
 
   const roleDescriptions: Record<Role, string> = {
-    farmer: 'Enter new harvest data and generate tracking QR codes.',
+    farmer: 'Log your Kandhamal Haladi harvest and generate QR codes for tracking.',
     distributor: 'Scan produce to log transportation and processing steps.',
     retailer: 'Scan incoming produce to log it into your retail inventory.',
-    consumer: 'Scan a product QR code to view its full journey from farm to shelf.',
+    consumer: 'Scan a product QR code to view its full journey from the farms of Odisha.',
   };
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center">
           <div className="mr-4 flex items-center">
             <Leaf className="h-6 w-6 mr-2 text-primary" />
@@ -33,14 +33,14 @@ export default function Home() {
       <main className="container py-8 md:py-16">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Supply Chain Transparency
+            Odisha Agricultural Supply Chain
           </h1>
           <p className="text-lg text-muted-foreground mt-3 max-w-2xl mx-auto">
-            Follow produce from the farm to your table with immutable, verifiable records powered by an AI-validated blockchain.
+            A transparent and fair digital ledger for tracking produce from the farm to your table, ensuring authenticity and fair pricing for crops like Kandhamal Haladi.
           </p>
         </div>
 
-        <Card className="max-w-4xl mx-auto bg-card/50 border-border/40">
+        <Card className="max-w-4xl mx-auto bg-card/90">
           <CardHeader className="text-center border-b pb-4">
             <CardTitle className="text-2xl">Select Your Role</CardTitle>
             <CardDescription className="text-base">{roleDescriptions[role]}</CardDescription>

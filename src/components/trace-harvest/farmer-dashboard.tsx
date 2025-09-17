@@ -32,7 +32,7 @@ const formSchema = z.object({
   harvestDate: z.date({
     required_error: 'A harvest date is required.',
   }),
-  qualityMetrics: z.string().min(5, 'Please provide quality metrics (e.g., weight, size, color).'),
+  qualityMetrics: z.string().min(5, 'Please provide quality metrics (e.g., Curcumin content, Weight, Grade).'),
 });
 
 const initialState: FormState = {
@@ -47,10 +47,12 @@ export default function FarmerDashboard() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      cropName: '',
+      cropName: 'Kandhamal Haladi',
       qualityMetrics: '',
     },
   });
+
+  const { isSubmitting } = form.formState;
 
   useEffect(() => {
     if (state.message) {
@@ -123,7 +125,7 @@ export default function FarmerDashboard() {
               <FormItem>
                 <FormLabel className="text-lg">Crop Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Organic Honeycrisp Apples" {...field} className="h-12 text-lg"/>
+                  <Input placeholder="e.g., Kandhamal Haladi" {...field} className="h-14 text-lg"/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -143,7 +145,7 @@ export default function FarmerDashboard() {
                       <Button
                         variant={'outline'}
                         className={cn(
-                          'w-full pl-3 text-left font-normal h-12 text-lg',
+                          'w-full pl-3 text-left font-normal h-14 text-lg',
                           !field.value && 'text-muted-foreground'
                         )}
                       >
@@ -175,7 +177,7 @@ export default function FarmerDashboard() {
                 <FormLabel className="text-lg">Quality Metrics</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Describe the quality, e.g., Weight: 15kg, Size: Medium, Color: Deep Red"
+                    placeholder="e.g., Curcumin: 5.2%, Weight: 20kg, Grade: A"
                     {...field}
                     className="text-lg min-h-32"
                   />
@@ -188,8 +190,8 @@ export default function FarmerDashboard() {
               </FormItem>
             )}
           />
-          <Button type="submit" size="lg" className="w-full text-lg h-14" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          <Button type="submit" size="lg" className="w-full text-lg h-14" disabled={isSubmitting}>
+            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Validate and Submit to Blockchain
           </Button>
         </form>

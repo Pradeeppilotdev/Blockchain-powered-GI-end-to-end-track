@@ -14,7 +14,7 @@ export default function TracePage({ params }: { params: { id: string } }) {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <Link href="/" passHref>
             <Button variant="outline" size="icon">
@@ -27,7 +27,7 @@ export default function TracePage({ params }: { params: { id: string } }) {
         </div>
       </header>
       <main className="container py-8 md:py-16">
-        <Card className="max-w-4xl mx-auto overflow-hidden bg-card/50">
+        <Card className="max-w-4xl mx-auto overflow-hidden bg-card/90">
           <div className="grid md:grid-cols-2">
             <div className="relative h-80 md:h-auto">
               <Image
@@ -35,7 +35,7 @@ export default function TracePage({ params }: { params: { id: string } }) {
                 alt={produce.name}
                 fill
                 className="object-cover"
-                data-ai-hint="fresh produce"
+                data-ai-hint="turmeric spices"
               />
             </div>
             <div className="p-8">
