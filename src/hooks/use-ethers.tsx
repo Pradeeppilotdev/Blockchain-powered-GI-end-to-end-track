@@ -1,87 +1,262 @@
 'use client';
 
-import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
-import { ethers, BrowserProvider, Signer } from 'ethers';
+import { useActionState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { submitHarvestData, type FormState } from '@/app/actions';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon, Loader2, PartyPopper, Bot } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import QrCodeDisplay from './qr-code-display';
+import { Card } from '../ui/card';
 
-interface EthersContextValue {
-  provider: BrowserProvider | null;
-  signer: Signer | null;
-  address: string | null;
-  connect: () => Promise<void>;
-  disconnect: () => void;
-}
+const formSchema = z.object({
+  cropName: z.string().min(2, 'Please select a crop.'),
+  harvestDate: z.date({
+    required_error: 'A harvest date is required.',
+  }),
+  qualityMetrics: z
+    .string()
+    .min(
+      5,
+      'Please provide quality metrics (e.g., Curcumin content, Weight, Grade).'
+    ),
+});
 
-const EthersContext = createContext<EthersContextValue | null>(null);
-
-export const useEthers = () => {
-  const context = useContext(EthersContext);
-  if (!context) {
-    throw new Error('useEthers must be used within a BlockchainProvider');
-  }
-  return context;
+const initialState: FormState = {
+  success: false,
+  message: '',
 };
 
-export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
-  const [provider, setProvider] = useState<BrowserProvider | null>(null);
-  const [signer, setSigner] = useState<Signer | null>(null);
-  const [address, setAddress] = useState<string | null>(null);
+const cropOptions = [
+  'Kandhamal Haladi',
+  'Rice',
+  'Pulses',
+  'Oil Seeds',
+  'Jute',
+  'Coconut',
+  'Tea',
+  'Cotton',
+  'Groundnut',
+  'Rubber',
+  'Turmeric (Other)',
+];
 
-  const connect = async () => {
-    if (window.ethereum) {
-      try {
-        // A Web3Provider wraps a standard Web3 provider, which is
-        // what MetaMask injects as window.ethereum into each page
-        const browserProvider = new ethers.BrowserProvider(window.ethereum);
-        
-        // MetaMask requires requesting permission to connect users accounts
-        await browserProvider.send('eth_requestAccounts', []);
+export default function FarmerDashboard() {
+  const [state, formAction] = useActionState(submitHarvestData, initialState);
+  const { toast } = useToast();
 
-        // The MetaMask plugin also allows signing transactions to
-        // send ether and pay to change state within the blockchain.
-        // For this, you need the account signer...
-        const signer = await browserProvider.getSigner();
-        const address = await signer.getAddress();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      cropName: '',
+      qualityMetrics: '',
+    },
+  });
 
-        setProvider(browserProvider);
-        setSigner(signer);
-        setAddress(address);
-      } catch (error) {
-        console.error('Failed to connect wallet:', error);
-      }
-    } else {
-      // if MetaMask is not installed, direct them to install it
-      alert('Please install MetaMask!');
-    }
-  };
+  const {
+    formState: { isSubmitting },
+  } = form;
 
-  const disconnect = () => {
-    setProvider(null);
-    setSigner(null);
-    setAddress(null);
-  };
-
-  // Listen for account changes
   useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts: string[]) => {
-        if (accounts.length > 0) {
-          connect();
-        } else {
-          disconnect();
-        }
-      });
-
-      window.ethereum.on('chainChanged', () => {
-        window.location.reload();
-      });
+    if (state.message) {
+      if (state.success) {
+        toast({
+          title: 'Success!',
+          description: state.message,
+        });
+        form.reset();
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: state.message,
+        });
+      }
     }
-  }, []);
+  }, [state, toast, form]);
 
-  const value = { provider, signer, address, connect, disconnect };
+  const handleReset = () => {
+    form.reset();
+    window.location.reload();
+  };
+
+  if (state.success && state.produceId) {
+    return (
+      <div className="text-center flex flex-col items-center gap-6">
+        <div className="p-4 bg-primary/10 rounded-full">
+          <PartyPopper className="w-16 h-16 text-primary" />
+        </div>
+        <h2 className="text-2xl font-bold">Product Authenticated!</h2>
+        <p className="text-muted-foreground max-w-md">
+          Your product is now registered on the blockchain. Attach this unique
+          QR code to the batch for complete traceability.
+        </p>
+        <Card className="p-4 bg-background">
+          <QrCodeDisplay produceId={state.produceId} />
+        </Card>
+        <Button onClick={handleReset}>Register Another Batch</Button>
+      </div>
+    );
+  }
 
   return (
-    <EthersContext.Provider value={value}>
-      {children}
-    </EthersContext.Provider>
+    <div>
+      <h2 className="text-2xl font-bold mb-6 text-center">
+        Producer: Register New Product
+      </h2>
+      <Form {...form}>
+        <form
+          action={formAction}
+          className="space-y-8"
+        >
+          {state.errors && state.errors.length > 0 && (
+            <Alert variant="destructive">
+              <AlertTitle>Validation Error</AlertTitle>
+              <AlertDescription>
+                <ul className="list-disc pl-5">
+                  {state.errors.map((error, i) => (
+                    <li key={i}>{error}</li>
+                  ))}
+                </ul>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <FormField
+            control={form.control}
+            name="cropName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-lg">GI Product Name</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger className="h-14 text-lg">
+                      <SelectValue placeholder="Select a GI product to register" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {cropOptions.map((crop) => (
+                      <SelectItem key={crop} value={crop} className="text-lg">
+                        {crop}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="harvestDate"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="text-lg">Harvest/Production Date</FormLabel>
+                <input
+                  type="hidden"
+                  name="harvestDate"
+                  value={field.value?.toISOString().split('T')[0] ?? ''}
+                />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={'outline'}
+                        className={cn(
+                          'w-full pl-3 text-left font-normal h-14 text-lg',
+                          !field.value && 'text-muted-foreground'
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, 'PPP')
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date('1900-01-01')
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="qualityMetrics"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-lg">
+                  Quality & Certification Details
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="e.g., GI-Tagged, Curcumin: 5.2%, Grade: A, Organic Certified"
+                    {...field}
+                    className="text-lg min-h-32"
+                  />
+                </FormControl>
+                <FormDescription className="flex items-center gap-2 pt-2">
+                  <Bot className="w-4 h-4" />
+                  This data will be validated and permanently stored on the
+                  blockchain.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full text-lg h-14"
+            disabled={isSubmitting}
+          >
+            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Authenticate and Submit
+          </Button>
+        </form>
+      </Form>
+    </div>
   );
-};
+}

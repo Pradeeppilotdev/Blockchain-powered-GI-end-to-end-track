@@ -3,7 +3,6 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { Inter, PT_Sans } from 'next/font/google';
-import { BlockchainProvider } from '@/hooks/use-ethers.tsx';
 
 const ptSans = PT_Sans({
   subsets: ['latin'],
@@ -31,17 +30,15 @@ export default function RootLayout({
           ptSans.variable
         )}
       >
-        <BlockchainProvider>
-          <div className="flex-1">{children}</div>
-          <footer className="py-6 md:px-8 md:py-0">
-            <div className="container flex flex-col items-center justify-center gap-4 md:h-24 md:flex-row">
-              <p className="text-balance text-center text-sm leading-loose text-muted-foreground">
-                A prototype for supply chain transparency.
-              </p>
-            </div>
-          </footer>
-          <Toaster />
-        </BlockchainProvider>
+        <div className="flex-1">{children}</div>
+        <footer className="py-6 md:px-8 md:py-0">
+          <div className="container flex flex-col items-center justify-center gap-4 md:h-24 md:flex-row">
+            <p className="text-balance text-center text-sm leading-loose text-muted-foreground">
+              A prototype for supply chain transparency.
+            </p>
+          </div>
+        </footer>
+        <Toaster />
       </body>
     </html>
   );
