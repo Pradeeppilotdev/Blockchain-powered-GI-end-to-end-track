@@ -5,8 +5,8 @@ import { validateHarvestData } from '@/ai/flows/data-format-validation';
 
 const FormSchema = z.object({
   cropName: z.string().min(2, 'Crop name must be at least 2 characters.'),
-  harvestDate: z.date({
-    required_error: 'A harvest date is required.',
+  harvestDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: 'A harvest date is required.',
   }),
   qualityMetrics: z.string().min(5, 'Please provide quality metrics.'),
 });
@@ -23,15 +23,15 @@ export async function submitHarvestData(prevState: FormState, formData: FormData
 
   const parsedData = FormSchema.safeParse({
     cropName: rawFormData.cropName,
-    harvestDate: new Date(rawFormData.harvestDate as string),
+    harvestDate: rawFormData.harvestDate,
     qualityMetrics: rawFormData.qualityMetrics,
   });
-
+  
   if (!parsedData.success) {
     return {
       success: false,
       message: 'Invalid data provided.',
-      errors: parsedData.error.flatten().fieldErrors.cropName,
+      errors: parsedData.error.flatten().formErrors,
     };
   }
 
@@ -40,7 +40,7 @@ export async function submitHarvestData(prevState: FormState, formData: FormData
   try {
     const validationInput = {
       cropName,
-      harvestDate: harvestDate.toISOString().split('T')[0],
+      harvestDate: new Date(harvestDate).toISOString().split('T')[0],
       qualityMetrics,
     };
 
