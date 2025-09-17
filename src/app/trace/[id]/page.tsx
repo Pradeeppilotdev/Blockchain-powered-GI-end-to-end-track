@@ -69,7 +69,7 @@ export default function TracePage({ params }: { params: { id: string } }) {
               <CardTitle className="text-2xl">Supply Chain Journey</CardTitle>
               <CardDescription className="text-base">
                 This entire history is securely logged on the blockchain, guaranteeing its origin and authenticity.
-              </-CardDescription>
+              </CardDescription>
             </CardHeader>
             <TraceTimeline events={traceEvents} />
           </CardContent>
