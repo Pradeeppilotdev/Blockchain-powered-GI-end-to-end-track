@@ -14,4 +14,6 @@ export interface SupplyChainEvent {
   location: string;
   timestamp: string;
   actor: string; // Could be a name, company, or blockchain address
+  transactionHash: string;
+  price: number | null;
 }
