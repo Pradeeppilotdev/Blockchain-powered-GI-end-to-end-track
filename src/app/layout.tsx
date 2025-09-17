@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { Inter, PT_Sans } from 'next/font/google';
-import { BlockchainProvider } from '@/hooks/use-ethers';
+import { BlockchainProvider } from '@/hooks/use-ethers.tsx';
 
 const ptSans = PT_Sans({
   subsets: ['latin'],

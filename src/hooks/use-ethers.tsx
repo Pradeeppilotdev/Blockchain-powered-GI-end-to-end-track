@@ -29,8 +29,16 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
   const connect = async () => {
     if (window.ethereum) {
       try {
+        // A Web3Provider wraps a standard Web3 provider, which is
+        // what MetaMask injects as window.ethereum into each page
         const browserProvider = new ethers.BrowserProvider(window.ethereum);
+        
+        // MetaMask requires requesting permission to connect users accounts
         await browserProvider.send('eth_requestAccounts', []);
+
+        // The MetaMask plugin also allows signing transactions to
+        // send ether and pay to change state within the blockchain.
+        // For this, you need the account signer...
         const signer = await browserProvider.getSigner();
         const address = await signer.getAddress();
 
@@ -41,6 +49,7 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
         console.error('Failed to connect wallet:', error);
       }
     } else {
+      // if MetaMask is not installed, direct them to install it
       alert('Please install MetaMask!');
     }
   };
@@ -51,6 +60,7 @@ export const BlockchainProvider = ({ children }: { children: ReactNode }) => {
     setAddress(null);
   };
 
+  // Listen for account changes
   useEffect(() => {
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', (accounts: string[]) => {

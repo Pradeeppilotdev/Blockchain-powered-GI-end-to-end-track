@@ -33,7 +33,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import QrCodeDisplay from './qr-code-display';
 import { Card } from '../ui/card';
-import { useEthers } from '@/hooks/use-ethers';
+import { useEthers } from '@/hooks/use-ethers.tsx';
 
 const formSchema = z.object({
   cropName: z.string().min(2, 'Please select a crop.'),
@@ -198,7 +198,7 @@ export default function FarmerDashboard() {
                 <input
                   type="hidden"
                   name="harvestDate"
-                  value={field.value?.toISOString() ?? ''}
+                  value={field.value?.toISOString().split('T')[0] ?? ''}
                 />
                 <Popover>
                   <PopoverTrigger asChild>
