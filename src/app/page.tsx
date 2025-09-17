@@ -36,7 +36,7 @@ export default function Home() {
         <div className="container flex h-16 items-center">
           <div className="mr-4 flex items-center">
             <Leaf className="h-6 w-6 mr-2 text-primary" />
-            <span className="font-bold text-lg">leGIt Code</span>
+            <span className="font-bold text-lg">TraceHarvest</span>
           </div>
         </div>
       </header>
