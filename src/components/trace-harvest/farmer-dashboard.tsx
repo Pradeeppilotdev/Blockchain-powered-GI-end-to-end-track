@@ -45,6 +45,7 @@ const formSchema = z.object({
       5,
       'Please provide quality metrics (e.g., Curcumin content, Weight, Grade).'
     ),
+  price: z.coerce.number().positive('Please enter a valid price.'),
 });
 
 const initialState: FormState = {
@@ -75,6 +76,7 @@ export default function FarmerDashboard() {
     defaultValues: {
       cropName: '',
       qualityMetrics: '',
+      price: 0,
     },
   });
 
@@ -156,6 +158,7 @@ export default function FarmerDashboard() {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  name="cropName"
                 >
                   <FormControl>
                     <SelectTrigger className="h-14 text-lg">
@@ -234,6 +237,7 @@ export default function FarmerDashboard() {
                   <Textarea
                     placeholder="e.g., GI-Tagged, Curcumin: 5.2%, Grade: A, Organic Certified"
                     {...field}
+                    name="qualityMetrics"
                     className="text-lg min-h-32"
                   />
                 </FormControl>
@@ -246,6 +250,30 @@ export default function FarmerDashboard() {
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-lg">Price per Unit (INR)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="e.g., 150.00"
+                    {...field}
+                    name="price"
+                    className="h-14 text-lg"
+                  />
+                </FormControl>
+                <FormDescription>
+                  Enter the initial price for this batch.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <Button
             type="submit"
             size="lg"

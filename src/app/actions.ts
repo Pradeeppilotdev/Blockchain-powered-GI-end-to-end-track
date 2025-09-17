@@ -9,6 +9,7 @@ const FormSchema = z.object({
     message: 'A harvest date is required.',
   }),
   qualityMetrics: z.string().min(5, 'Please provide quality metrics.'),
+  price: z.coerce.number().min(0, 'Price must be a positive number.'),
 });
 
 export type FormState = {
@@ -25,6 +26,7 @@ export async function submitHarvestData(prevState: FormState, formData: FormData
     cropName: rawFormData.cropName,
     harvestDate: rawFormData.harvestDate,
     qualityMetrics: rawFormData.qualityMetrics,
+    price: rawFormData.price,
   });
   
   if (!parsedData.success) {
@@ -35,7 +37,7 @@ export async function submitHarvestData(prevState: FormState, formData: FormData
     };
   }
 
-  const { cropName, harvestDate, qualityMetrics } = parsedData.data;
+  const { cropName, harvestDate, qualityMetrics, price } = parsedData.data;
 
   try {
     const validationInput = {
@@ -63,7 +65,8 @@ export async function submitHarvestData(prevState: FormState, formData: FormData
     // const transaction = await contract.createProduce(
     //   cropName,
     //   new Date(harvestDate).getTime(),
-    //   qualityMetrics
+    //   qualityMetrics,
+    //   price
     // );
     // await transaction.wait();
     // const produceId = await contract.getProduceIdFromTransaction(transaction.hash);

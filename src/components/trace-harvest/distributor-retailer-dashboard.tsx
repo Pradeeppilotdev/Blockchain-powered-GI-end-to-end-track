@@ -49,7 +49,8 @@ export default function DistributorRetailerDashboard({ role }: DistributorRetail
     //   role, // 'Distributor' or 'Retailer'
     //   newLocation,
     //   newStatus,
-    //   new Date().getTime()
+    //   new Date().getTime(),
+    //   price,
     // ).send({ from: stakeholderAddress });
     //
     // This action is immutable and transparent to all parties.
@@ -100,6 +101,10 @@ export default function DistributorRetailerDashboard({ role }: DistributorRetail
                 Status Update
               </Label>
               <Input id="status" placeholder={role === 'Distributor' ? 'e.g., In Transit' : 'e.g., On Display'} className="h-11 text-base"/>
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="price" className="text-base">Transaction Price (INR)</Label>
+              <Input id="price" type="number" placeholder="e.g., 200.00" className="h-11 text-base"/>
             </div>
             <div className="space-y-2">
               <Label htmlFor="timestamp" className="text-base">Timestamp</Label>
