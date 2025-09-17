@@ -101,14 +101,6 @@ export default function FarmerDashboard() {
       <Form {...form}>
         <form
           action={formAction}
-          onSubmit={form.handleSubmit(() => {
-            const formData = new FormData();
-            const values = form.getValues();
-            formData.append('cropName', values.cropName);
-            formData.append('harvestDate', values.harvestDate.toISOString());
-            formData.append('qualityMetrics', values.qualityMetrics);
-            formAction(formData);
-          })}
           className="space-y-8"
         >
           {state.errors && state.errors.length > 0 && (
